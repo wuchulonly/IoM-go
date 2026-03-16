@@ -47,6 +47,7 @@ const (
 	CtrlRemAgentCtrl            = "rem_agent_ctrl"
 	CtrlRemAgentLog             = "rem_agent_log"
 	CtrlRemAgentStop            = "rem_agent_stop"
+	CtrlRemAgentReconfigure     = "rem_agent_reconfigure"
 	CtrlRemRegister             = "rem_register"
 	CtrlPivotReverse            = "pivot_reverse"
 	CtrlPivotProxy              = "pivot_proxy"
