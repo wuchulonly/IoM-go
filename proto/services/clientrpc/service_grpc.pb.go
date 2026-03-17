@@ -27,6 +27,7 @@ const (
 	MaliceRPC_GetClients_FullMethodName          = "/clientrpc.MaliceRPC/GetClients"
 	MaliceRPC_GetSessions_FullMethodName         = "/clientrpc.MaliceRPC/GetSessions"
 	MaliceRPC_GetSession_FullMethodName          = "/clientrpc.MaliceRPC/GetSession"
+	MaliceRPC_GetSessionCount_FullMethodName     = "/clientrpc.MaliceRPC/GetSessionCount"
 	MaliceRPC_GetSessionHistory_FullMethodName   = "/clientrpc.MaliceRPC/GetSessionHistory"
 	MaliceRPC_SessionManage_FullMethodName       = "/clientrpc.MaliceRPC/SessionManage"
 	MaliceRPC_GetListeners_FullMethodName        = "/clientrpc.MaliceRPC/GetListeners"
@@ -180,6 +181,7 @@ type MaliceRPCClient interface {
 	GetClients(ctx context.Context, in *clientpb.Empty, opts ...grpc.CallOption) (*clientpb.Clients, error)
 	GetSessions(ctx context.Context, in *clientpb.SessionRequest, opts ...grpc.CallOption) (*clientpb.Sessions, error)
 	GetSession(ctx context.Context, in *clientpb.SessionRequest, opts ...grpc.CallOption) (*clientpb.Session, error)
+	GetSessionCount(ctx context.Context, in *clientpb.Empty, opts ...grpc.CallOption) (*clientpb.SessionCount, error)
 	GetSessionHistory(ctx context.Context, in *clientpb.Int, opts ...grpc.CallOption) (*clientpb.TasksContext, error)
 	SessionManage(ctx context.Context, in *clientpb.BasicUpdateSession, opts ...grpc.CallOption) (*clientpb.Empty, error)
 	GetListeners(ctx context.Context, in *clientpb.Empty, opts ...grpc.CallOption) (*clientpb.Listeners, error)
@@ -395,6 +397,15 @@ func (c *maliceRPCClient) GetSessions(ctx context.Context, in *clientpb.SessionR
 func (c *maliceRPCClient) GetSession(ctx context.Context, in *clientpb.SessionRequest, opts ...grpc.CallOption) (*clientpb.Session, error) {
 	out := new(clientpb.Session)
 	err := c.cc.Invoke(ctx, MaliceRPC_GetSession_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *maliceRPCClient) GetSessionCount(ctx context.Context, in *clientpb.Empty, opts ...grpc.CallOption) (*clientpb.SessionCount, error) {
+	out := new(clientpb.SessionCount)
+	err := c.cc.Invoke(ctx, MaliceRPC_GetSessionCount_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1703,6 +1714,7 @@ type MaliceRPCServer interface {
 	GetClients(context.Context, *clientpb.Empty) (*clientpb.Clients, error)
 	GetSessions(context.Context, *clientpb.SessionRequest) (*clientpb.Sessions, error)
 	GetSession(context.Context, *clientpb.SessionRequest) (*clientpb.Session, error)
+	GetSessionCount(context.Context, *clientpb.Empty) (*clientpb.SessionCount, error)
 	GetSessionHistory(context.Context, *clientpb.Int) (*clientpb.TasksContext, error)
 	SessionManage(context.Context, *clientpb.BasicUpdateSession) (*clientpb.Empty, error)
 	GetListeners(context.Context, *clientpb.Empty) (*clientpb.Listeners, error)
@@ -1890,6 +1902,9 @@ func (UnimplementedMaliceRPCServer) GetSessions(context.Context, *clientpb.Sessi
 }
 func (UnimplementedMaliceRPCServer) GetSession(context.Context, *clientpb.SessionRequest) (*clientpb.Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
+}
+func (UnimplementedMaliceRPCServer) GetSessionCount(context.Context, *clientpb.Empty) (*clientpb.SessionCount, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSessionCount not implemented")
 }
 func (UnimplementedMaliceRPCServer) GetSessionHistory(context.Context, *clientpb.Int) (*clientpb.TasksContext, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSessionHistory not implemented")
@@ -2413,6 +2428,24 @@ func _MaliceRPC_GetSession_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MaliceRPCServer).GetSession(ctx, req.(*clientpb.SessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MaliceRPC_GetSessionCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(clientpb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MaliceRPCServer).GetSessionCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MaliceRPC_GetSessionCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MaliceRPCServer).GetSessionCount(ctx, req.(*clientpb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4984,6 +5017,10 @@ var MaliceRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSession",
 			Handler:    _MaliceRPC_GetSession_Handler,
+		},
+		{
+			MethodName: "GetSessionCount",
+			Handler:    _MaliceRPC_GetSessionCount_Handler,
 		},
 		{
 			MethodName: "GetSessionHistory",
